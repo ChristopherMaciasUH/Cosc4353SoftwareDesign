@@ -30,7 +30,7 @@
             </div>
             <div class="field">
                 <div class="ui left icon input">
-                <input name="name" type="text" placeholder="username">
+                <input name="password" type="text" placeholder="username">
                 <i class="user icon"></i>
                 </div>
             </div>
@@ -57,20 +57,14 @@
             .form({
             fields: {
               name: {
-                identifier: 'name',
-                rules: [
-                  {
-                    type   : 'empty',
-                    prompt : 'Please enter a username'
-                  }
-                ],
                 identifier: 'password',
                 rules: [
                   {
                     type   : 'empty',
-                    prompt : 'Please enter a password'
+                    prompt : 'Please fill in the required fields'
                   }
-                ]  
+                ],
+                  
               }
             }
             })
