@@ -6,6 +6,7 @@
         <!-- You MUST include jQuery before Fomantic -->
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.js"></script>
         <link re="stylesheet" type="text/css" href="stylesheet.css">
     </head>
     <body>
@@ -18,7 +19,7 @@
           <div class="column">
           </div>    
           <div class="three wide column">
-            <div class="ui segment">
+            <form class="ui form segment">
             <div class="ui two column centered grid">
             <div class="row">
                 <h2 class="ui image header">  
@@ -27,25 +28,53 @@
                     </div>
                 </h2>
             </div>
-            <div class="row">  
-            <div class="ui input">
-                <input type="text" placeholder="username">
+            <div class="field">
+                <div class="ui left icon input">
+                <input name="name" type="text" placeholder="username">
+                <i class="user icon"></i>
+                </div>
             </div>
-            </div>
-            <div class="ui input">
-                <input type="text" placeholder="password">
+            <div class="field">
+                <div class="ui left icon input">
+                <input name="password" type="text" placeholder="password">
+                <i class="lock icon"></i>
+                </div>    
             </div>
             <div class="row">    
-            <button class="ui button">
+            <button class="ui primary submit button">
                 Register
             </button>
             </div>
           </div>
-        </div>
+          <div class="ui error message"></div>        
+        </form>
             </div>
             <div class="column">
             </div>
         </div>
-        <script src="/semantic/dist/semantic.min.js"></script>
+        <script>
+            $('.ui.form')
+            .form({
+            fields: {
+              name: {
+                identifier: 'name',
+                rules: [
+                  {
+                    type   : 'empty',
+                    prompt : 'Please enter a username'
+                  }
+                ],
+                identifier: 'password',
+                rules: [
+                  {
+                    type   : 'empty',
+                    prompt : 'Please enter a password'
+                  }
+                ]  
+              }
+            }
+            })
+            ;
+        </script>
     </body>    
 </html>
