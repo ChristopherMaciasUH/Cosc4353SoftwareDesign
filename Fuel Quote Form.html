@@ -7,6 +7,7 @@
         <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.css">
         <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     </head>
     <body>
         <div class="ui secondaty pointing menu inverted">
@@ -29,11 +30,12 @@
             Logout  
           </a>
         </div>
+        <div id="app">
         <div class="ui three column grid">
           <div class="column">
           </div>    
           <div class="column">
-            <form class="ui form segment">
+            <form class="ui form segment" id='quote'>
             <div class="ui two column centered grid">
             <div class="row">
                 <h2 class="ui image header">  
@@ -46,17 +48,17 @@
                 <div class="field">
                     <label>Please Enter Requested Gallon Amount</label>
                     <div class="ui left icon input">
-                    <input name="amount" type="text" placeholder="amount in gallons">
+                    <input name="amount" type="text" v-model="gallons" placeholder="amount in gallons">
                     <i class="gas pump icon"></i>
                     </div>    
                 </div>
             </div>
             <div class="field">
-            <label>Please Enter Delivery Date</label>    
+            <label>Delivery Date</label>    
             <div class="ui calendar" id="date">
                   <div class="ui input left icon">
                     <i class="calendar icon"></i>
-                    <input type="text" placeholder="Date">
+                    <input name="dateInput" type="text" placeholder="Date">
                   </div>
                 </div>
             </div>     
@@ -72,7 +74,7 @@
                 <label>Suggested Amount</label>
                 <div class="ui right labeled disabled input">
                     <label for="pricing" class="ui label">$</label>
-                    <input type="text" value="40000" id="pricing">
+                    <input type="text" v-bind:value="price" id="pricing">
                     <div class ="ui basic label">.00</div>
                 </div>
                 </div>
@@ -80,7 +82,7 @@
                 <label>Total Amount</label>
                 <div class="ui right labeled disabled input">
                     <label for="pricing" class="ui label">$</label>
-                    <input type="text" value="80000" id="pricing">
+                    <input type="text" v-bind:value="gallons*price" id="pricing">
                     <div class ="ui basic label">.00</div>
                 </div>
             </div>
@@ -97,12 +99,21 @@
             <div class="column">
             </div>
         </div>
+        </div>
         <script>
+            var app = new Vue({
+              el: '#app',
+              data: {
+                price: 250,
+                gallons: ''
+                
+              }
+            })
              $('#date').calendar({type: 'date'});
             $('.ui.form')
             .form({
             fields: {
-              name: {
+              gallonAmount: {
                 identifier: 'amount',
                 rules: [
                   {
@@ -113,11 +124,22 @@
                         type: 'number',
                         prompt: 'Please enter a numeric value'
                     }
-                ]
-              }
+                ],
+                
+              },
+                dateThing: {
+                    identifier: 'dateInput',
+                    rules: [
+                      {
+                          type : 'empty',
+                          promt: 'please enter a date'
+                      }
+                  ]
+                }
             }
             })
             ;
+            
         </script>
     </body>    
 </html>
