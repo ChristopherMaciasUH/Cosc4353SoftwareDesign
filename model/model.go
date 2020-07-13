@@ -24,8 +24,13 @@ type DeliveryData struct {
 	SuggestedPrice []string `json: "suggested"`
 	TotalAmount []string `json: "total"`
 }
+type NewDeliveryData struct {
+	Date string `json: "date"`
+	Amount string `json: "amount"`
+	SuggestedPrice string `json: "suggested"`
+	TotalAmount string `json: "total"`
+}
 type ResponseResult struct {
 	Error string `json: "error"`
 	Result string `json: "result"`
 }
-
