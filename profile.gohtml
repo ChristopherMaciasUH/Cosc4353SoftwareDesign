@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Profile Management</title>
+    <!-- You MUST include jQuery before Fomantic -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+<div class="ui pointing menu inverted">
+    <div class="header item">
+        Cosc 4353
+    </div>
+    <a class="item">
+        Home
+    </a>
+    <a class="item active">
+        Profile
+    </a>
+    <a class="item" href="\fuelQuote">
+        Fuel Quote
+    </a>
+    <a class="item" href="\fuelHistory">
+        Fuel Quote History
+    </a>
+    <a class="item right aligned">
+        Logout
+    </a>
+</div>
+<div id="app">
+<div class="ui three column centered grid">
+    <div class="column">
+    </div>
+    <div class="column">
+        <form class="ui form segment" action="/profileInfo">
+            <div class="ui two column padded centered grid">
+                <div class="row">
+                    <h2 class="ui image header">
+                        <div class="content">
+                            Profile Management
+                        </div>
+                    </h2>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label>Name</label>
+                        <div class="ui left icon input">
+                            <input name="name" type="text" placeholder="Full Name" value={{ .Fullname }}>
+                            <i class="user outline icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label>Address</label>
+                        <div class="ui left icon input">
+                            <input name="address1" type="text" placeholder="Address 1" value={{index .Address 0}}>
+                            <i class="home icon"></i>
+                        </div>
+                        <input name="address2" type="text" placeholder="Address 2(optional)" value={{index .Address 1}}>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <label>City and State</label>
+                        <div class="ui left icon input">
+                            <input name="city" type="text" placeholder="City" value={{index .Address 2}}>
+                            <i class="city icon"></i>
+                        </div>
+                        <select name="state" class="ui dropdown" value={{index .Address 3}}>
+                            <option value="Il">Illinois</option>
+                            <option value="Ny">New York</option>
+                            <option value="Wa">Washington</option>
+                            <option value="Il">Illinois</option>
+                            <option value="Ny">New York</option>
+                            <option value="Wa">Washington</option>
+                            <option value="Tx">Texas</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label>Zipcode</label>
+                        <input name="zipcode" type="text" placeholder="Zip Code" value={{index .Address 4}}>
+                    </div>
+                </div>
+                <button class="ui primary submit button">
+                    Register
+                </button>
+            </div>
+            <div class="ui error message"></div>
+        </form>
+    </div>
+    <div class="column">
+    </div>
+</div>
+</div>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            fullname: {{ .Fullname }},
+
+        }
+    })
+    $('.ui.form')
+        .form({
+            fields: {
+                name: {
+                    identifier: 'name',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter your name'
+                        },
+                        {
+                            type: 'maxLength[50]',
+                            prompt: 'Your name is too long'
+                        }
+                    ]
+                },
+                address: {
+                    identifier: 'address1',
+                    rules: [
+                        {
+                            type: 'maxLength[100]',
+                            prompt: 'Your address is too long'
+                        },
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter an address'
+                        }
+                    ]
+                },
+                city: {
+                    identifier: 'city',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter a city'
+                        },
+                        {
+                            type: 'maxLength[100]',
+                            prompt: 'Your City name is too long'
+                        }
+                    ]
+                },
+                state: {
+                    identifier: 'state',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter a city'
+                        }
+                    ]
+                },
+                zipcode: {
+                    identifier: 'zipcode',
+                    rules: [
+                        {
+                            type: 'empty',
+                            prompt: 'Please enter a zipcode'
+                        },
+                        {
+                            type: 'number',
+                            prompt: 'Enter a valid zipcode'
+                        },
+                        {
+                            type: 'exactLength[5]',
+                            prompt: 'Enter a valid zipcode'
+                        }
+                    ]
+                }
+            }
+        });
+</script>
+</body>
+</html>

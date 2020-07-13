@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Fuel Quote Form</title>
+    <!-- You MUST include jQuery before Fomantic -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.6/dist/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+<div class="ui pointing menu inverted">
+    <div class="header item">
+        Cosc 4353
+    </div>
+    <a class="item">
+        Home
+    </a>
+    <a class="item" href="\profile">
+        Profile
+    </a>
+    <a class="item active">
+        Fuel Quote
+    </a>
+    <a class="item" href="\fuelHistory">
+        Fuel Quote History
+    </a>
+    <a class="item right aligned">
+        Logout
+    </a>
+</div>
+<div id="app">
+    <div class="ui three column grid">
+        <div class="column">
+        </div>
+        <div class="column">
+            <form class="ui form segment" id='quote' action="/quoteForm">
+                <div class="ui two column centered grid">
+                    <div class="row">
+                        <h2 class="ui image header">
+                            <div class="content">
+                                Fuel Quote Form
+                            </div>
+                        </h2>
+                    </div>
+                    <div class="ui form">
+                        <div class="field">
+                            <label>Please Enter Requested Gallon Amount</label>
+                            <div class="ui left icon input">
+                                <input name="amount" type="text" v-model="gallons" placeholder="amount in gallons">
+                                <i class="gas pump icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Delivery Date</label>
+                        <div class="ui calendar" id="date">
+                            <div class="ui input left icon">
+                                <i class="calendar icon"></i>
+                                <input name="dateInput" type="text" placeholder="Date">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Address</label>
+                        <div class="ui left icon disabled input">
+                            <input type="text" value={{ .Address }}>
+                            <i class="home icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Suggested Amount</label>
+                        <div class="ui right labeled disabled input">
+                            <label for="pricing" class="ui label">$</label>
+                            <input name="suggested" type="text" v-bind:value="price" id="pricing">
+                            <div class ="ui basic label">.00</div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Total Amount</label>
+                        <div class="ui right labeled disabled input">
+                            <label for="pricing" class="ui label">$</label>
+                            <input name="total" type="text" v-bind:value="gallons*price" id="pricing">
+                            <div class ="ui basic label">.00</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button class="ui primary submit button">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+                <div class="ui error message"></div>
+
+            </form>
+        </div>
+        <div class="column">
+        </div>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            price: 250,
+            gallons: '',
+            importedAddress: {{ .addressString }}
+        }
+    })
+    $('#date').calendar({type: 'date'});
+    $('.ui.form')
+        .form({
+            fields: {
+                gallonAmount: {
+                    identifier: 'amount',
+                    rules: [
+                        {
+                            type   : 'empty',
+                            prompt : 'Please enter an amount'
+                        },
+                        {
+                            type: 'number',
+                            prompt: 'Please enter a numeric value'
+                        }
+                    ],
+
+                },
+                dateThing: {
+                    identifier: 'dateInput',
+                    rules: [
+                        {
+                            type : 'empty',
+                            promt: 'please enter a date'
+                        }
+                    ]
+                }
+            }
+        })
+    ;
+
+</script>
+</body>
+</html>
