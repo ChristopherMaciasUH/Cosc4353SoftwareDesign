@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -14,7 +14,18 @@ import (
 	"quickstart/model"
 )
 
-
+func addressToString(addressArr []string)(address string){
+	address = ""
+	for i:= 0; i < len(addressArr); i++{
+		if addressArr[i] != "" {
+			address += addressArr[i]
+		}
+		if i < len(addressArr)-1 && addressArr[i] != "" {
+			address += ","
+		}
+	}
+	return address
+}
 
 func HashPassword(password string)(string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password),14)
@@ -38,6 +49,12 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request){
 	err = collection.FindOne(context.TODO(), bson.D{{"username",user.Username}}).Decode(&result)
 	if err != nil {
 		if err.Error() == "mongo: no documents in result" {
+			if user.Username == "" || user.Password == ""{
+				res.Error = "Username or password are too short"
+				json.NewEncoder(w).Encode(res)
+				fmt.Println(res.Error)
+				return
+			}
 			hash, err := HashPassword(user.Password)
 			if err != nil {
 				res.Error = "Error while hashing password"
@@ -69,11 +86,14 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request){
 			fmt.Println(res.Result)
 			return
 		}
-		res.Result = "User already exists"
+	} else {
+		res.Error = "User already exists"
 		json.NewEncoder(w).Encode(res)
+		fmt.Println(res.Error)
 		return
 	}
 }
+
 
 func LoginHandler(w http.ResponseWriter, r* http.Request){
 	w.Header().Set("Content-Type","application/json")
@@ -184,6 +204,7 @@ func InsertProfileInfo(w http.ResponseWriter, r*http.Request){
 		return
 	} else {
 		res.Error = err.Error()
+		res.Result = "Not Authorized"
 		json.NewEncoder(w).Encode(res)
 		return
 	}
@@ -194,7 +215,7 @@ func DeliveryRequestHandler(w http.ResponseWriter, r* http.Request){
 	tokenString  := r.Header.Get("Authorization")
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token)(interface{}, error){
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method")
+			return nil, fmt.Errorf("unexpected signing method")
 		}
 		return []byte("secret"), nil
 	})
@@ -207,6 +228,8 @@ func DeliveryRequestHandler(w http.ResponseWriter, r* http.Request){
 		if err != nil {
 			log.Fatal(err)
 		}
+		var newDelivery model.NewDeliveryData
+		_ = json.NewDecoder(r.Body).Decode(&newDelivery)
 		user.Username =  claims["username"].(string)
 		err = collection.FindOne(context.TODO(), bson.D{{"username",user.Username}}).Decode(&user)
 		if err != nil {
@@ -222,12 +245,13 @@ func DeliveryRequestHandler(w http.ResponseWriter, r* http.Request){
 		}
 		err = information.FindOne(context.TODO(), bson.D{{"_id",user.PersonalInfo}}).Decode(&userInfo)
 		//TODO: create an imported JSON delivery model
+		address := addressToString(userInfo.Address)
 		delivery.FullName = append(delivery.FullName,userInfo.FullName)
-		delivery.Address = append(delivery.Address,userInfo.Address[0])
-		delivery.Date = append(delivery.Date,user.Username)
-		delivery.Amount = append(delivery.Amount,user.Username)
-		delivery.SuggestedPrice = append(delivery.SuggestedPrice,user.Username)
-		delivery.TotalAmount = append(delivery.TotalAmount,user.Username)
+		delivery.Address = append(delivery.Address,address)
+		delivery.Date = append(delivery.Date,newDelivery.Date)
+		delivery.Amount = append(delivery.Amount,newDelivery.Amount)
+		delivery.SuggestedPrice = append(delivery.SuggestedPrice,newDelivery.SuggestedPrice)
+		delivery.TotalAmount = append(delivery.TotalAmount,newDelivery.TotalAmount)
 		update := bson.M{"$set":bson.M{
 			"fullname": delivery.FullName,
 			"address": delivery.Address,
@@ -258,7 +282,7 @@ func GetDeliveryRequests(w http.ResponseWriter, r* http.Request){
 	tokenString  := r.Header.Get("Authorization")
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token)(interface{}, error){
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method")
+			return nil, fmt.Errorf("unexpected signing method")
 		}
 		return []byte("secret"), nil
 	})
