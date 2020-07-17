@@ -36,28 +36,6 @@ func addressToString(addressArr [5]string)(address string){
 }
 
 func main(){
-	//fmt.Println("starting...")
-	//info := clientModel.UserEntry{
-	//	Username: "someusername",
-	//	Password: "somepassword",
-	//}
-	//requests.UserRegistration()
-	//loginInfo := requests.UserLogin(info)
-	//AddressArray := [5]string{"hahaha", "ahahaha", "hehehe", "tx", "77070"}
-	//testProfile := clientModel.ProfileInfo{
-	//	Fullname: "nother unique fullname",
-	//	Address: AddressArray,
-	//}
-	//requests.UserProfileSetter(loginInfo.Token, testProfile)
-	//requests.UserProfileGetter(loginInfo.Token)
-	//DeliveryInformation := clientModel.DeliveryData{
-	//	Date: "some date",
-	//	Amount: "some random amount",
-	//	SuggestedPrice: "some suggested price",
-	//	TotalAmount: "some total amount",
-	//}
-	//requests.FuelQuoteForm(loginInfo.Token, DeliveryInformation)
-	//requests.FuelQuoteInfo(loginInfo.Token)
 	router := mux.NewRouter()
 	//Pages
 	router.HandleFunc("/profile",profile)
@@ -70,6 +48,7 @@ func main(){
 	router.HandleFunc("/registration",UserRegistrationHandler)
 	router.HandleFunc("/profileInfo",UserProfileManagementHandler)
 	router.HandleFunc("/quoteForm",FuelQuoteHandler)
+	router.HandleFunc("/logout",logout)
 	http.ListenAndServe(":9000",router)
 }
 
@@ -159,6 +138,9 @@ func FuelQuoteHandler(w http.ResponseWriter, r *http.Request){
 	http.Redirect(w, r, "/fuelQuote", http.StatusSeeOther)
 }
 
-func FuelHistoryHandler(w http.ResponseWriter, r *http.Request){
-
+func logout(w http.ResponseWriter, r *http.Request){
+	entryInfo = clientModel.UserEntryInfo{}
+	currentProfileInfo = clientModel.ProfileInfo{}
+	tpl = template.Must(template.ParseGlob("templates/*_.gohtml"))
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
