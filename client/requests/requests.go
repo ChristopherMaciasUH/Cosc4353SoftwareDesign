@@ -117,3 +117,19 @@ func FuelQuoteInfo(token string) clientModel.FullDeliveryData {
 		return returnInfo
 	}
 }
+
+func StatesQuery() clientModel.States{
+	request, _ := http.NewRequest("GET", "http://localhost:8000/getStates", nil)
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		fmt.Println(err)
+		return clientModel.States{}
+	} else {
+		var stateInfo clientModel.States
+		json.NewDecoder(response.Body).Decode(&stateInfo)
+		fmt.Println(stateInfo)
+		return stateInfo
+	}
+}
+
