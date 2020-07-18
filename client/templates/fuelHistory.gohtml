@@ -25,7 +25,7 @@
     <a class="item active">
         Fuel Quote History
     </a>
-    <a class="item right aligned">
+    <a class="item right aligned" href="\logout">
         Logout
     </a>
 </div>
@@ -50,111 +50,20 @@
                     <th>Total Amount</th>
                 </tr></thead>
                 <tbody>
+                {{ $name := .FullName }}
+                {{ $address := .Address }}
+                {{ $amount := .Amount }}
+                {{ $date := .Date }}
+                {{ $suggested := .SuggestedPrice }}
+                {{range $index,$total := .TotalAmount }}
                 <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
+                    <td data-label="Client Name">{{index $name $index}}</td>
+                    <td data-label="Delivery Date">{{index $date $index}}</td>
+                    <td data-label="Address">{{index $address $index}}</td>
+                    <td data-label="Amount Requested">{{index $amount $index}}</td>
+                    <td data-label="Suggested Price">${{index $suggested $index}}</td>
+                    <td data-label="Total Amount">${{ $total }}</td>
                 </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                <tr>
-                    <td data-label="Client Name">John Doe</td>
-                    <td data-label="Delivery Date">04/10/2020</td>
-                    <td data-label="Address">1234 Cougar Dr. Houston Tx 77070</td>
-                    <td data-label="Amount Requested">2000</td>
-                    <td data-label="Suggested Price">$40000</td>
-                    <td data-label="Total Amount">$80000</td>
-                </tr>
-                {{range .}}
-                    <tr>
-                        <td data-label="Client Name">{{ .Fullname }}</td>
-                        <td data-label="Delivery Date">{{ .Date }}</td>
-                        <td data-label="Address">{{ .Address }}</td>
-                        <td data-label="Amount Requested">{{ .Amount }}</td>
-                        <td data-label="Suggested Price">${{ .SuggestedPrice }}</td>
-                        <td data-label="Total Amount">${{ .TotalAmount }}</td>
-                    </tr>
                 {{end}}
                 </tbody>
             </table>
