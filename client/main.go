@@ -20,7 +20,7 @@ func init() {
 }
 
 var userInfoForRightNow clientModel.UserEntryInfo
-//var userProfileInfoForRightNow clientModel.ProfileInfo
+var userProfileInfoForRightNow clientModel.ProfileInfo
 
 func addressToString(addressArr [5]string)(address string){
 	address = ""
@@ -53,7 +53,11 @@ func main(){
 }
 
 func profile(w http.ResponseWriter, r *http.Request){
+	stateInfo := requests.StatesQuery()
 	currentProfileInfo = requests.UserProfileGetter(entryInfo.Token)
+	currentProfileInfo.StateName = stateInfo.Names
+	currentProfileInfo.StateValue = stateInfo.Abbreviations
+	fmt.Println(currentProfileInfo)
 	tpl.ExecuteTemplate(w, "profile.gohtml", currentProfileInfo)
 }
 
@@ -69,6 +73,8 @@ func fuelQuote(w http.ResponseWriter, r *http.Request){
 
 func fuelHistory(w http.ResponseWriter, r *http.Request){
 	fuelInfo := requests.FuelQuoteInfo(entryInfo.Token)
+	fmt.Println("The fuel info is:")
+	fmt.Println(fuelInfo)
 	tpl.ExecuteTemplate(w, "fuelHistory.gohtml", fuelInfo)
 }
 
@@ -123,7 +129,6 @@ func UserProfileManagementHandler(w http.ResponseWriter, r *http.Request){
 	}
 	fmt.Println(compatibleUserProfileInfo)
 	requests.UserProfileSetter(entryInfo.Token, compatibleUserProfileInfo)
-	//currentProfileInfo = requests.UserProfileGetter(entryInfo.Token)
 	http.Redirect(w, r, "/profile", http.StatusSeeOther)
 }
 
