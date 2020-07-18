@@ -72,13 +72,11 @@
                             <i class="city icon"></i>
                         </div>
                         <select name="state" class="ui dropdown" value={{index .Address 3}}>
-                            <option value="Il">Illinois</option>
-                            <option value="Ny">New York</option>
-                            <option value="Wa">Washington</option>
-                            <option value="Il">Illinois</option>
-                            <option value="Ny">New York</option>
-                            <option value="Wa">Washington</option>
-                            <option value="Tx">Texas</option>
+                            <!-- remember to add name of value of state on dropdown -->
+                            {{ $stateVals := .StateValue }}
+                            {{range $index,$names := .StateName }}
+                                <option value={{index $stateVals $index}}>{{ $names }}</option>
+                            {{end}}
                         </select>
                     </div>
                 </div>
