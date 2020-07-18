@@ -112,9 +112,8 @@ func FuelQuoteInfo(token string) clientModel.FullDeliveryData {
 		return clientModel.FullDeliveryData{}
 	} else {
 		var returnInfo clientModel.FullDeliveryData
-		data, _ := ioutil.ReadAll(response.Body)
 		json.NewDecoder(response.Body).Decode(&returnInfo)
-		fmt.Println(string(data))
+		fmt.Println(returnInfo)
 		return returnInfo
 	}
 }
