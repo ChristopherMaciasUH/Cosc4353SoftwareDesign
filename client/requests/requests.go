@@ -133,3 +133,20 @@ func StatesQuery() clientModel.States{
 	}
 }
 
+func FuelQuoteCalculator(priorRequest bool, profileInfo clientModel.ProfileInfo) clientModel.PricingModule{
+	var marginPrices clientModel.PricingModule
+	marginPrices.CompanyProfitFactor = 0.1
+	marginPrices.GallonPrice = 1.5
+	if priorRequest {
+		marginPrices.RateHistoryFactor = 0.01
+	} else {
+		marginPrices.RateHistoryFactor = 0
+	}
+	if profileInfo.Address[3] == "TX" {
+		marginPrices.LocationFactor = 0.02
+	} else {
+		marginPrices.LocationFactor = 0.04
+	}
+	return marginPrices
+}
+
