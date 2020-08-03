@@ -31,7 +31,7 @@
     </a>
 </div>
 <div id="app">
-    <div class="ui three column grid">
+    <div v-bind:class="testClass">
         <div class="column">
         </div>
         <div class="column">
@@ -47,7 +47,7 @@
                     <div class="ui form">
                         <div class="field">
                             <label>Please Enter Requested Gallon Amount</label>
-                            <div class="ui left icon input">
+                            <div v-bind:class="suggestedInput">
                                 <input name="amount" type="text" v-model="gallons" placeholder="amount in gallons">
                                 <i class="gas pump icon"></i>
                             </div>
@@ -56,7 +56,7 @@
                     <div class="field">
                         <label>Delivery Date</label>
                         <div class="ui calendar" id="date">
-                            <div class="ui input left icon">
+                            <div v-bind:class="dateField">
                                 <i class="calendar icon"></i>
                                 <input name="dateInput" type="text" placeholder="Date">
                             </div>
@@ -72,73 +72,162 @@
 
                     <div class="field">
                         <label>Suggested Amount</label>
-                        <div class="ui right labeled disabled input">
+                        <div class="ui left labeled disabled input">
                             <label for="pricing" class="ui label">$</label>
                             <input name="suggested" type="text" v-bind:value="price" id="pricing">
-                            <div class ="ui basic label">.00</div>
                         </div>
                     </div>
                     <div class="field">
                         <label>Total Amount</label>
-                        <div class="ui right labeled disabled input">
+                        <div class="ui left labeled disabled input">
                             <label for="pricing" class="ui label">$</label>
                             <input name="total" type="text" v-bind:value="gallons*price" id="pricing">
-                            <div class ="ui basic label">.00</div>
                         </div>
                     </div>
                     <div class="row">
-                        <button class="ui primary submit button">
+                        <button v-bind:class="submitButton">
                             Submit
+                        </button>
+                        <button v-bind:class="quoteButtonClass" v-on:click="quoteButton()">
+                            Quote
                         </button>
                     </div>
                 </div>
                 <div class="ui error message"></div>
+
             </form>
         </div>
-        <div class="column">
+        <div class="column" v-show="ok">
+            <div class="ui segment">
+                <div class="ui two column centered grid">
+                    <div class="row">
+                        <h2 class="ui image header">
+                            <div class="content">
+                                Pricing Breakdown
+
+                            </div>
+                        </h2>
+                    </div>
+
+                    <div class="row">
+                        <h2 id="gallonPricingHeader"> </h2>
+                    </div>
+                    <div class="row">
+                        <div class="field">
+                            <div v-on:click="acceptQuote()" class="ui toggle checkbox">
+                                <input type="checkbox" name="acceptance" tabindex="0" class="hidden">
+                                <label>I accept this price</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="column">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            price: 250,
-            gallons: '',
-            importedAddress: {{ .Address }}
-        }
-    })
-    $('#date').calendar({type: 'date'});
-    $('.ui.form')
-        .form({
-            fields: {
-                gallonAmount: {
-                    identifier: 'amount',
-                    rules: [
-                        {
-                            type   : 'empty',
-                            prompt : 'Please enter an amount'
+            <script>
+                var app = new Vue({
+                    el: '#app',
+                    data: {
+                        price: 0,
+                        gallons: '',
+                        testClass: "ui three column grid",
+                        dateField: "ui left icon disabled input",
+                        acceptanceField: "ui toggle checkbox",
+                        submitButton: "ui primary disabled submit button",
+                        ok: false,
+                        checked: false,
+                        suggestedInput: "ui left icon input",
+                        quoteButtonClass: "ui secondary button",
+                        gallonFactor: 0,
+                        locationFactor: {{ .LocationFactor }},
+                        RateHistoryFactor: {{ .RateHistoryFactor }},
+                        companyProfitFactor: {{ .CompanyProfitFactor }},
+                        gallonPrice: {{ .GallonPrice }},
+                        margin: 0,
+                        importedAddress: {{ .Address }}
+
+                    },
+                    methods: {
+                        pricingModule(){
+                            var galInt = parseInt(this.gallons, 10)
+                            if(galInt > 1000){
+                                this.gallonFactor = 0.02
+                            } else {
+                                this.gallonFactor = 0.03
+                            }
+                            this.margin = this.gallonFactor*(this.locationFactor - this.RateHistoryFactor + this.gallonFactor + this.companyProfitFactor)
+                            this.price = this.margin+1.5
+                            console.log(this.margin)
+                            console.log(this.margin+1.5)
+
                         },
-                        {
-                            type: 'number',
-                            prompt: 'Please enter a numeric value'
+                        quoteButton(){
+                            console.log("it is printing")
+                            var galInt = parseInt(this.gallons, 10)
+                            if(Number.isInteger(galInt)){
+                                this.testClass = "ui four column grid";
+                                this.ok = true;
+                                this.pricingModule();
+                                document.getElementById("gallonPricingHeader").innerHTML = "Gallon: $" + this.price;
+                            } else{
+                                console.log(this.gallons)
+                            }
+                        },
+                        acceptQuote(){
+                            if(this.checked == false){
+                                this.checked = true
+                                this.submitButton = "ui primary submit button";
+                                this.dateField = "ui left icon input";
+                                this.suggestedInput = "ui left icon disabled input"
+                                this.quoteButtonClass = "ui secondary disabled button"
+                            } else{
+                                this.checked = false
+                                this.submitButton = "ui primary submit disabled button";
+                                this.dateField = "ui left icon disabled input";
+                                this.suggestedInput = "ui left icon input"
+                                this.quoteButtonClass = "ui secondary button"
+                            }
                         }
-                    ],
+                    }
+                })
+                $('#date').calendar({type: 'date'});
+                $('.ui.form')
+                    .form({
+                        fields: {
+                            gallonAmount: {
+                                identifier: 'amount',
+                                rules: [
+                                    {
+                                        type   : 'empty',
+                                        prompt : 'Please enter an amount'
+                                    },
+                                    {
+                                        type: 'number',
+                                        prompt: 'Please enter a numeric value'
+                                    }
+                                ],
 
-                },
-                dateThing: {
-                    identifier: 'dateInput',
-                    rules: [
-                        {
-                            type : 'empty',
-                            promt: 'please enter a date'
+                            },
+                            dateThing: {
+                                identifier: 'dateInput',
+                                rules: [
+                                    {
+                                        type : 'empty',
+                                        promt: 'please enter a date'
+                                    }
+                                ]
+                            }
                         }
-                    ]
-                }
-            }
-        })
-    ;
+                    })
+                ;
+                $('.ui.checkbox')
+                    .checkbox()
+                ;
 
-</script>
+            </script>
+            <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 </body>
 </html>
