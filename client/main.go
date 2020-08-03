@@ -53,6 +53,16 @@ func main(){
 }
 
 func profile(w http.ResponseWriter, r *http.Request){
+	if entryInfo.Token == "" {
+		type LoginError struct{
+			Error string
+		}
+		failedAttempt := LoginError{
+			Error: "errorToast",
+		}
+		tpl.ExecuteTemplate(w, "login_.gohtml", failedAttempt)
+		return
+	}
 	stateInfo := requests.StatesQuery()
 	currentProfileInfo = requests.UserProfileGetter(entryInfo.Token)
 	currentProfileInfo.StateName = stateInfo.Names
@@ -62,13 +72,30 @@ func profile(w http.ResponseWriter, r *http.Request){
 }
 
 func fuelQuote(w http.ResponseWriter, r *http.Request){
-	type AddressStruct struct{
+	currentProfileInfo := requests.UserProfileGetter(entryInfo.Token)
+	deliveryData := requests.FuelQuoteInfo(entryInfo.Token)
+	var priorRequest bool
+	if len(deliveryData.Address) > 1{
+		priorRequest = true
+	} else {
+		priorRequest = false
+	}
+	fuelQuote := requests.FuelQuoteCalculator(priorRequest, currentProfileInfo)
+	type fuelQuoteInfo struct{
 		Address string
+		LocationFactor float64
+		RateHistoryFactor float64
+		CompanyProfitFactor float64
+		GallonPrice float64
 	}
-	AddressRn := AddressStruct{
+	fuelQuoteExecutionInfo := fuelQuoteInfo{
 		Address: addressToString(currentProfileInfo.Address),
+		LocationFactor: fuelQuote.LocationFactor,
+		RateHistoryFactor: fuelQuote.RateHistoryFactor,
+		CompanyProfitFactor: fuelQuote.CompanyProfitFactor,
+		GallonPrice: fuelQuote.GallonPrice,
 	}
-	tpl.ExecuteTemplate(w, "fuelQuote.gohtml", AddressRn)
+	tpl.ExecuteTemplate(w, "fuelQuote.gohtml", fuelQuoteExecutionInfo)
 }
 
 func fuelHistory(w http.ResponseWriter, r *http.Request){
@@ -85,6 +112,8 @@ func login(w http.ResponseWriter, r *http.Request){
 func register(w http.ResponseWriter, r *http.Request){
 	tpl.ExecuteTemplate(w, "register_.gohtml", nil)
 }
+
+
 
 func UserRegistrationHandler(w http.ResponseWriter, r *http.Request){
 	newUserRegistration := clientModel.UserEntry{
@@ -104,10 +133,12 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request){
 	returnedUserInfo, err := requests.UserLogin(newUserLogin)
 	if err.Error != ""{
 		fmt.Println("Login Failed")
+		tpl = template.Must(template.ParseGlob("templates/*_.gohtml"))
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
 		fmt.Println(returnedUserInfo)
 		entryInfo = returnedUserInfo
+		fmt.Println("Is the loginpage working")
 		tpl = template.Must(template.ParseGlob("templates/*.gohtml"))
 		http.Redirect(w, r, "/profile", http.StatusSeeOther)
 	}
@@ -149,3 +180,4 @@ func logout(w http.ResponseWriter, r *http.Request){
 	tpl = template.Must(template.ParseGlob("templates/*_.gohtml"))
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
